@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tristan Clerc — Cybersécurité & Administration systèmes</title>
+  <meta name="description" content="Portfolio de Tristan Clerc — étudiant en cybersécurité et administration des systèmes, alternant à la Fondation Dispensaire Général de Lyon.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg: #080b12;
+      --bg-2: #0c111b;
+      --surface: rgba(255, 255, 255, 0.03);
+      --surface-2: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.14);
+      --text: #e6edf3;
+      --muted: #8b98ad;
+      --faint: #5c6980;
+      --teal: #2dd4bf;
+      --emerald: #34d399;
+      --indigo: #818cf8;
+      --pink: #f472b6;
+      --amber: #fbbf24;
+      --glow: rgba(45, 212, 191, 0.35);
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Animated background */
+    .bg-fx {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(1000px 600px at 80% -10%, rgba(129, 140, 248, 0.14), transparent 60%),
+        radial-gradient(900px 600px at 0% 20%, rgba(45, 212, 191, 0.12), transparent 55%),
+        radial-gradient(800px 800px at 50% 120%, rgba(244, 114, 182, 0.08), transparent 60%),
+        var(--bg);
+    }
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 100% 60% at 50% 0%, #000 40%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 100% 60% at 50% 0%, #000 40%, transparent 100%);
+    }
+
+    ::selection { background: rgba(45, 212, 191, 0.3); color: #fff; }
+
+    /* Scroll progress */
+    .progress {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: linear-gradient(90deg, var(--teal), var(--indigo));
+      z-index: 1100; box-shadow: 0 0 12px var(--glow);
+      transition: width 0.1s linear;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem clamp(1.2rem, 5vw, 3rem);
+      background: rgba(8, 11, 18, 0.7);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      font-family: var(--mono); font-weight: 600; font-size: 1.05rem;
+      color: var(--text); text-decoration: none; letter-spacing: -0.02em;
+      display: flex; align-items: center; gap: 0.55rem;
+    }
+    .brand .prompt { color: var(--teal); }
+    .brand .cursor {
+      width: 9px; height: 1.05rem; background: var(--teal);
+      display: inline-block; animation: blink 1.2s steps(1) infinite;
+      border-radius: 1px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .nav-links { display: flex; gap: 0.4rem; align-items: center; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      padding: 0.5rem 0.85rem; border-radius: 8px; transition: all 0.2s ease;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--surface-2); }
+    .nav-cta {
+      color: var(--teal) !important; border: 1px solid rgba(45,212,191,0.3);
+    }
+    .nav-cta:hover { background: rgba(45,212,191,0.12) !important; }
+    .nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.3rem; cursor: pointer; }
+
+    /* Layout */
+    section { padding: clamp(4rem, 9vw, 7rem) clamp(1.2rem, 5vw, 3rem); }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+
+    .eyebrow {
+      font-family: var(--mono); font-size: 0.8rem; color: var(--teal);
+      text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.9rem;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .eyebrow::before { content: ''; width: 26px; height: 1px; background: var(--teal); opacity: 0.6; }
+
+    .section-title {
+      font-size: clamp(1.7rem, 4vw, 2.4rem); font-weight: 800; letter-spacing: -0.03em;
+      margin-bottom: 0.6rem;
+    }
+    .section-sub { color: var(--muted); max-width: 620px; margin-bottom: 2.8rem; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+      padding-top: 7rem; position: relative;
+    }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      font-family: var(--mono); font-size: 0.82rem; color: var(--muted);
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 0.45rem 0.9rem; border-radius: 100px; margin-bottom: 1.8rem;
+      width: fit-content;
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--emerald);
+      box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6); animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(52,211,153,0.5); }
+      70% { box-shadow: 0 0 0 8px rgba(52,211,153,0); }
+      100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
+    }
+    .hero h1 {
+      font-size: clamp(2.6rem, 8vw, 5rem); font-weight: 800; line-height: 1.02;
+      letter-spacing: -0.04em; margin-bottom: 1rem;
+    }
+    .hero h1 .grad {
+      background: linear-gradient(120deg, var(--teal), var(--indigo) 70%, var(--pink));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero .role {
+      font-family: var(--mono); font-size: clamp(0.95rem, 2.5vw, 1.25rem);
+      color: var(--text); margin-bottom: 1.6rem;
+    }
+    .hero .role .accent { color: var(--teal); }
+    .hero p.lead { font-size: 1.08rem; color: var(--muted); max-width: 640px; margin-bottom: 2.4rem; }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-bottom: 3.5rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      padding: 0.8rem 1.4rem; border-radius: 10px; font-weight: 600; font-size: 0.95rem;
+      text-decoration: none; transition: all 0.2s ease; cursor: pointer; border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: linear-gradient(120deg, var(--teal), var(--emerald));
+      color: #05221d; box-shadow: 0 8px 26px -8px var(--glow);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -8px var(--glow); }
+    .btn-ghost { background: var(--surface); border-color: var(--border-strong); color: var(--text); }
+    .btn-ghost:hover { background: var(--surface-2); border-color: var(--teal); color: var(--teal); }
+
+    .hero-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 720px;
+    }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.1rem 1.2rem;
+    }
+    .stat .num {
+      font-family: var(--mono); font-size: 1.6rem; font-weight: 700;
+      background: linear-gradient(120deg, var(--teal), var(--indigo));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      line-height: 1;
+    }
+    .stat .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 0.4rem; }
+
+    /* About */
+    .about-grid {
+      display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.4rem;
+    }
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; padding: 1.8rem;
+    }
+    .panel h3 {
+      font-size: 1rem; margin-bottom: 1.1rem; display: flex; align-items: center; gap: 0.6rem;
+      font-weight: 700;
+    }
+    .panel h3 i { color: var(--teal); }
+    .about-bio p { color: var(--muted); margin-bottom: 1rem; }
+    .about-bio p:last-child { margin-bottom: 0; }
+    .about-bio strong { color: var(--text); font-weight: 600; }
+
+    .about-side { display: flex; flex-direction: column; gap: 1.4rem; }
+    .info-list { display: flex; flex-direction: column; gap: 0.9rem; }
+    .info-item { display: flex; gap: 0.85rem; align-items: flex-start; }
+    .info-item .ic {
+      width: 34px; height: 34px; flex-shrink: 0; border-radius: 9px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      display: grid; place-items: center; color: var(--indigo); font-size: 0.9rem;
+    }
+    .info-item .t { font-weight: 600; font-size: 0.92rem; }
+    .info-item .d { font-size: 0.82rem; color: var(--muted); }
+
+    .quality-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .qtag {
+      font-size: 0.82rem; color: var(--text); background: var(--surface-2);
+      border: 1px solid var(--border); padding: 0.4rem 0.75rem; border-radius: 100px;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .qtag i { color: var(--emerald); font-size: 0.78rem; }
+
+    /* Skills bars */
+    .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem 2.4rem; }
+    .skill { }
+    .skill-head { display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.45rem; }
+    .skill-head .n { font-weight: 600; }
+    .skill-head .p { font-family: var(--mono); color: var(--muted); font-size: 0.8rem; }
+    .bar { height: 6px; background: var(--surface-2); border-radius: 100px; overflow: hidden; }
+    .bar span {
+      display: block; height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--teal), var(--indigo));
+      border-radius: 100px; transition: width 1.1s cubic-bezier(.2,.8,.2,1);
+    }
+
+    /* Filters */
+    .filters { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2.2rem; }
+    .filter-btn {
+      font-family: var(--mono); font-size: 0.82rem; color: var(--muted);
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 0.5rem 1rem; border-radius: 100px; cursor: pointer; transition: all 0.2s ease;
+    }
+    .filter-btn:hover { color: var(--text); border-color: var(--border-strong); }
+    .filter-btn.active { color: #05221d; background: var(--teal); border-color: var(--teal); font-weight: 600; }
+
+    /* Cards */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.4rem; }
+    .card {
+      position: relative; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; padding: 1.6rem; display: flex; flex-direction: column;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      opacity: 0; transform: translateY(24px);
+    }
+    .card.in { opacity: 1; transform: translateY(0); }
+    .card:hover { transform: translateY(-5px); border-color: var(--border-strong); box-shadow: 0 20px 40px -20px rgba(0,0,0,0.6); }
+    .card.feature {
+      border-color: rgba(45, 212, 191, 0.28);
+      background: linear-gradient(180deg, rgba(45,212,191,0.06), var(--surface) 55%);
+    }
+    .card.feature:hover { border-color: var(--teal); box-shadow: 0 22px 46px -18px var(--glow); }
+
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.8rem; margin-bottom: 1rem; }
+    .card-ic {
+      width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+      display: grid; place-items: center; font-size: 1.15rem;
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--teal);
+    }
+    .card.feature .card-ic { color: var(--teal); background: rgba(45,212,191,0.1); border-color: rgba(45,212,191,0.25); }
+    .badge {
+      font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 0.3rem 0.6rem; border-radius: 100px; display: inline-flex; align-items: center; gap: 0.35rem;
+      white-space: nowrap;
+    }
+    .badge-feature { color: var(--amber); background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); }
+    .badge-cve { color: var(--pink); background: rgba(244,114,182,0.1); border: 1px solid rgba(244,114,182,0.25); }
+    .card h3 { font-size: 1.12rem; font-weight: 700; margin-bottom: 0.6rem; letter-spacing: -0.01em; line-height: 1.3; }
+    .card p.desc { font-size: 0.9rem; color: var(--muted); flex-grow: 1; margin-bottom: 1.1rem; }
+
+    .cve-row { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1.1rem; }
+    .cve-chip {
+      font-family: var(--mono); font-size: 0.76rem; text-decoration: none;
+      color: var(--pink); background: rgba(244,114,182,0.08);
+      border: 1px solid rgba(244,114,182,0.25); padding: 0.35rem 0.6rem; border-radius: 8px;
+      transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .cve-chip:hover { background: rgba(244,114,182,0.16); border-color: var(--pink); }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+    .tag {
+      font-family: var(--mono); font-size: 0.74rem; color: var(--muted);
+      background: var(--surface-2); border: 1px solid var(--border);
+      padding: 0.3rem 0.6rem; border-radius: 7px;
+    }
+    .card-foot {
+      margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .res-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .res-tag {
+      font-family: var(--mono); font-size: 0.72rem; font-weight: 500; color: var(--teal);
+      background: rgba(45,212,191,0.08); border: 1px solid rgba(45,212,191,0.22);
+      padding: 0.28rem 0.6rem; border-radius: 6px;
+    }
+    .ue-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .ue-list li {
+      position: relative; padding-left: 1.05rem; font-size: 0.78rem; line-height: 1.5;
+      color: var(--muted);
+    }
+    .ue-list li::before {
+      content: ''; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px;
+      border-radius: 50%; background: var(--indigo);
+    }
+
+    /* Timeline for alternance context */
+    .exp-header {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; justify-content: space-between;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.3rem 1.6rem; margin-bottom: 2.2rem;
+    }
+    .exp-header .left { display: flex; align-items: center; gap: 1rem; }
+    .exp-logo {
+      width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(45,212,191,0.2), rgba(129,140,248,0.2));
+      border: 1px solid var(--border-strong); display: grid; place-items: center;
+      color: var(--teal); font-size: 1.3rem;
+    }
+    .exp-header .co { font-weight: 700; font-size: 1.05rem; }
+    .exp-header .ro { font-size: 0.85rem; color: var(--muted); }
+    .exp-header .period {
+      font-family: var(--mono); font-size: 0.82rem; color: var(--teal);
+      background: rgba(45,212,191,0.08); border: 1px solid rgba(45,212,191,0.22);
+      padding: 0.45rem 0.9rem; border-radius: 100px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border); background: var(--bg-2);
+      padding: clamp(3rem, 6vw, 4.5rem) clamp(1.2rem, 5vw, 3rem) 2.5rem;
+    }
+    .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 2.5rem; max-width: 1180px; margin: 0 auto; }
+    .foot-grid h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); margin-bottom: 1.1rem; font-family: var(--mono); }
+    .foot-brand { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.7rem; }
+    .foot-brand .grad { background: linear-gradient(120deg, var(--teal), var(--indigo)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .foot-desc { color: var(--muted); font-size: 0.9rem; max-width: 320px; }
+    .foot-link { display: block; color: var(--muted); text-decoration: none; font-size: 0.9rem; margin-bottom: 0.7rem; transition: color 0.2s; }
+    .foot-link:hover { color: var(--teal); }
+    .socials { display: flex; gap: 0.7rem; margin-top: 1.2rem; }
+    .socials a {
+      width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
+      background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+      text-decoration: none; font-size: 1.05rem; transition: all 0.2s ease;
+    }
+    .socials a:hover { color: var(--teal); border-color: var(--teal); transform: translateY(-2px); }
+    .copyright {
+      max-width: 1180px; margin: 2.5rem auto 0; padding-top: 1.6rem; border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: space-between;
+      font-size: 0.82rem; color: var(--faint); font-family: var(--mono);
+    }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .hero-stats { grid-template-columns: repeat(2, 1fr); }
+      .foot-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .nav-links {
+        position: fixed; top: 64px; right: clamp(1.2rem,5vw,3rem); flex-direction: column; align-items: stretch;
+        background: rgba(12,17,27,0.97); backdrop-filter: blur(14px);
+        border: 1px solid var(--border); border-radius: 14px; padding: 0.6rem; gap: 0.2rem;
+        min-width: 190px; display: none;
+      }
+      .nav-links.open { display: flex; }
+      .nav-toggle { display: block; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .foot-grid { grid-template-columns: 1fr; gap: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-fx"></div>
+  <div class="bg-grid"></div>
+  <div class="progress" id="progress"></div>
+
+  <nav class="navbar">
+    <a href="#top" class="brand">
+      <span class="prompt">~/</span>tristan-clerc<span class="cursor"></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    <div class="nav-links" id="navLinks">
+      <a href="#about">Profil</a>
+      <a href="#research">Recherche</a>
+      <a href="#alternance">Alternance</a>
+      <a href="#projets">Projets</a>
+      <a href="#contact" class="nav-cta">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero wrap" id="top">
+    <div class="status-pill"><span class="dot"></span> Ouvert aux opportunités · cybersécurité & infrastructures</div>
+    <h1>Tristan Clerc<br><span class="grad">Cybersécurité &amp; systèmes</span></h1>
+    <p class="role"><span class="accent">&gt;</span> Administrateur réseau &amp; sécurité · Chercheur en vulnérabilités</p>
+    <p class="lead">
+      Étudiant en BUT Informatique (parcours DACS) à l'IUT Lyon 1, alternant à la Fondation Dispensaire
+      Général de Lyon. Je conçois et sécurise des infrastructures critiques — et je traque les failles
+      dans le code bas niveau, jusqu'au noyau.
+    </p>
+    <div class="hero-cta">
+      <a href="#research" class="btn btn-primary"><i class="fas fa-bug"></i> Voir mes recherches 0-day</a>
+      <a href="#alternance" class="btn btn-ghost"><i class="fas fa-server"></i> Missions en alternance</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="num">2</div><div class="lbl">CVE 0-day (NetBSD LPE)</div></div>
+      <div class="stat"><div class="num">Top 3</div><div class="lbl">Junior — France Cybersecurity Challenge</div></div>
+      <div class="stat"><div class="num">2 ans</div><div class="lbl">Alternance en milieu médical</div></div>
+      <div class="stat"><div class="num">IDS/SIEM</div><div class="lbl">Supervision déployée en autonomie</div></div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="eyebrow">01 — Profil</p>
+        <h2 class="section-title">Qui suis-je</h2>
+        <p class="section-sub">Une double compétence, technique et métier, forgée au contact d'un système d'information vital.</p>
+      </div>
+      <div class="about-grid">
+        <div class="panel about-bio reveal">
+          <h3><i class="fas fa-terminal"></i> À propos</h3>
+          <p>
+            Passionné de cybersécurité depuis mes 15 ans, je termine mon <strong>BUT Informatique</strong> à l'IUT Lyon 1 –
+            site de la Doua, parcours <strong>Déploiement d'Applications Communicantes et Sécurisées (DACS)</strong>.
+          </p>
+          <p>
+            En alternance à la <strong>Fondation Dispensaire Général de Lyon</strong>, j'occupe le poste d'apprenti
+            administrateur réseau et support informatique. J'y ai conçu et déployé, en quasi-autonomie, une chaîne
+            complète de détection d'intrusion, tout en menant la migration du parc vers Windows 11 et celle de
+            l'infrastructure de virtualisation vers Proxmox.
+          </p>
+          <p>
+            En parallèle, je pratique la recherche offensive : CTF, cryptographie et
+            <strong>exploitation de noyau</strong>, avec la découverte de deux failles 0-day d'élévation de privilèges
+            dans NetBSD. Mon objectif : intégrer une école d'ingénieur pour me spécialiser en administration des
+            systèmes complexes et en cybersécurité.
+          </p>
+        </div>
+        <div class="about-side">
+          <div class="panel reveal">
+            <h3><i class="fas fa-id-badge"></i> Repères</h3>
+            <div class="info-list">
+              <div class="info-item">
+                <div class="ic"><i class="fas fa-graduation-cap"></i></div>
+                <div><div class="t">BUT Informatique — DACS</div><div class="d">IUT Lyon 1 · 2023–2026</div></div>
+              </div>
+              <div class="info-item">
+                <div class="ic"><i class="fas fa-arrow-trend-up"></i></div>
+                <div><div class="t">École d'ingénieur (CPE Lyon)</div><div class="d">Admis — spécialité cybersécurité &amp; infrastructures</div></div>
+              </div>
+              <div class="info-item">
+                <div class="ic"><i class="fas fa-language"></i></div>
+                <div><div class="t">Bac Bachibac + Maths expertes</div><div class="d">Section binationale franco-espagnole</div></div>
+              </div>
+              <div class="info-item">
+                <div class="ic"><i class="fas fa-shield-halved"></i></div>
+                <div><div class="t">Attestation ANSSI</div><div class="d">Recommandations en cybersécurité</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel reveal">
+            <h3><i class="fas fa-fingerprint"></i> Ce qui me définit</h3>
+            <div class="quality-tags">
+              <span class="qtag"><i class="fas fa-check"></i> Curieux</span>
+              <span class="qtag"><i class="fas fa-check"></i> Persévérant</span>
+              <span class="qtag"><i class="fas fa-check"></i> Rigoureux</span>
+              <span class="qtag"><i class="fas fa-check"></i> Autonome</span>
+              <span class="qtag"><i class="fas fa-check"></i> Sang-froid</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="panel reveal" style="margin-top:1.4rem">
+        <h3><i class="fas fa-chart-simple"></i> Compétences techniques</h3>
+        <div class="skills-grid">
+          <div class="skill"><div class="skill-head"><span class="n">Administration systèmes &amp; virtualisation</span><span class="p">Proxmox · Hyper-V</span></div><div class="bar"><span data-w="88%"></span></div></div>
+          <div class="skill"><div class="skill-head"><span class="n">Cybersécurité défensive (IDS/SIEM)</span><span class="p">Suricata · Wazuh</span></div><div class="bar"><span data-w="82%"></span></div></div>
+          <div class="skill"><div class="skill-head"><span class="n">Sécurité offensive &amp; exploitation</span><span class="p">Pwn · Kernel · Reverse</span></div><div class="bar"><span data-w="80%"></span></div></div>
+          <div class="skill"><div class="skill-head"><span class="n">Réseau</span><span class="p">Ubiquiti UniFi · VLAN · 3CX</span></div><div class="bar"><span data-w="78%"></span></div></div>
+          <div class="skill"><div class="skill-head"><span class="n">Programmation C &amp; bas niveau</span><span class="p">C · mémoire · exploits</span></div><div class="bar"><span data-w="80%"></span></div></div>
+          <div class="skill"><div class="skill-head"><span class="n">Python &amp; automatisation</span><span class="p">scripting · crypto</span></div><div class="bar"><span data-w="85%"></span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESEARCH / PERSONAL PROJECTS -->
+  <section id="research">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="eyebrow">02 — Recherche &amp; projets personnels</p>
+        <h2 class="section-title">Sécurité offensive</h2>
+        <p class="section-sub">Recherche de vulnérabilités, exploitation bas niveau et compétitions de haut niveau.</p>
+      </div>
+      <div class="cards">
+
+        <div class="card feature">
+          <div class="card-top">
+            <div class="card-ic"><i class="fas fa-bug-slash"></i></div>
+            <span class="badge badge-cve"><i class="fas fa-triangle-exclamation"></i> 0-DAY · LPE</span>
+          </div>
+          <h3>Failles 0-day d'élévation de privilèges dans NetBSD</h3>
+          <p class="desc">
+            Découverte de deux vulnérabilités <strong>0-day</strong> d'élévation de privilèges locale (LPE) dans le
+            noyau NetBSD. Analyse du code source du kernel, rétro-ingénierie du chemin vulnérable, développement de
+            <em>proof-of-concept</em> d'exploitation permettant le passage d'un utilisateur non privilégié à root, puis
+            divulgation responsable auprès de l'équipe de sécurité NetBSD.
+          </p>
+          <div class="cve-row">
+            <a class="cve-chip" href="https://nvd.nist.gov/vuln/detail/CVE-2026-57842" target="_blank" rel="noopener noreferrer"><i class="fas fa-shield-virus"></i> CVE-2026-57842</a>
+            <a class="cve-chip" href="https://nvd.nist.gov/vuln/detail/CVE-2026-57843" target="_blank" rel="noopener noreferrer"><i class="fas fa-shield-virus"></i> CVE-2026-57843</a>
+          </div>
+          <div class="tags">
+            <span class="tag">C</span><span class="tag">Kernel exploitation</span><span class="tag">Reverse engineering</span><span class="tag">Gestion mémoire</span><span class="tag">Responsible disclosure</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.05 · Programmation système</span><span class="res-tag">R3.09 · Cryptographie et sécurité</span></div>
+            <ul class="ue-list"><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li><li>Installer, configurer, mettre à disposition, maintenir en conditions opérationnelles des infrastructures, des services et des réseaux et optimiser le système informatique d'une organisation</li></ul>
+          </div>
+        </div>
+
+        <div class="card feature">
+          <div class="card-top">
+            <div class="card-ic"><i class="fas fa-trophy"></i></div>
+            <span class="badge badge-feature"><i class="fas fa-star"></i> Top 3</span>
+          </div>
+          <h3>Top 3 Junior — France Cybersecurity Challenge</h3>
+          <p class="desc">
+            Podium dans la catégorie Junior du FCSC, la compétition nationale de référence organisée par l'ANSSI :
+            résolution de challenges de pwn, reverse engineering et exploitation face à l'élite française.
+          </p>
+          <div class="tags">
+            <span class="tag">Pwn</span><span class="tag">Reverse</span><span class="tag">Exploitation</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.09 · Cryptographie et sécurité</span></div>
+            <ul class="ue-list"><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li></ul>
+          </div>
+        </div>
+
+        <div class="card feature">
+          <div class="card-top">
+            <div class="card-ic"><i class="fas fa-lock"></i></div>
+            <span class="badge badge-feature"><i class="fas fa-star"></i> Top 30 FR</span>
+          </div>
+          <h3>Top 30 France — CryptoHack</h3>
+          <p class="desc">
+            Classement national sur la plateforme CryptoHack : résolution de challenges cryptographiques avancés
+            mêlant mathématiques, arithmétique modulaire et cryptanalyse en Python.
+          </p>
+          <div class="tags">
+            <span class="tag">Cryptographie</span><span class="tag">Python</span><span class="tag">Mathématiques</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.09 · Cryptographie et sécurité</span></div>
+            <ul class="ue-list"><li>Développer — c'est-à-dire concevoir, coder, tester et intégrer — une solution informatique pour un client</li><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-ic"><i class="fas fa-microchip"></i></div>
+          </div>
+          <h3>Analyse de sécurité de l'allocateur malloc</h3>
+          <p class="desc">
+            Étude approfondie de l'allocateur dynamique <code>malloc</code> : analyse des structures internes du tas,
+            recherche de failles mémoire et documentation des primitives d'exploitation.
+          </p>
+          <div class="tags">
+            <span class="tag">C</span><span class="tag">Heap</span><span class="tag">Security research</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.09 · Cryptographie et sécurité</span></div>
+            <ul class="ue-list"><li>Développer — c'est-à-dire concevoir, coder, tester et intégrer — une solution informatique pour un client</li><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li></ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ALTERNANCE -->
+  <section id="alternance">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="eyebrow">03 — Alternance</p>
+        <h2 class="section-title">Missions en entreprise</h2>
+        <p class="section-sub">Apprenti administrateur réseau &amp; sécurité dans un environnement de santé à haute disponibilité.</p>
+      </div>
+
+      <div class="exp-header reveal">
+        <div class="left">
+          <div class="exp-logo"><i class="fas fa-house-medical"></i></div>
+          <div>
+            <div class="co">Fondation Dispensaire Général de Lyon</div>
+            <div class="ro">Apprenti administrateur réseau &amp; support informatique · équipe SI (4 personnes)</div>
+          </div>
+        </div>
+        <div class="period">2023 — 2026</div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card feature">
+          <div class="card-top">
+            <div class="card-ic"><i class="fas fa-shield-halved"></i></div>
+            <span class="badge badge-feature"><i class="fas fa-star"></i> Projet phare</span>
+          </div>
+          <h3>Supervision de sécurité IDS / SIEM</h3>
+          <p class="desc">
+            Conception et déploiement, en quasi-autonomie, d'une chaîne complète de détection d'intrusion. Sonde
+            <strong>Suricata</strong> alimentée par un port miroir (mode ponté), journaux acheminés via
+            <strong>Filebeat</strong> vers un SIEM <strong>Wazuh</strong> qui corrèle les alertes et notifie l'équipe
+            par courriel. Validation par tests offensifs (détection de scan de ports) et réglage fin des règles pour
+            réduire les faux positifs.
+          </p>
+          <div class="tags">
+            <span class="tag">Suricata</span><span class="tag">Wazuh</span><span class="tag">Filebeat</span><span class="tag">Port miroir</span><span class="tag">Blue team</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.05 · Programmation système</span><span class="res-tag">R3.09 · Cryptographie et sécurité</span></div>
+            <ul class="ue-list"><li>Installer, configurer, mettre à disposition, maintenir en conditions opérationnelles des infrastructures, des services et des réseaux et optimiser le système informatique d'une organisation</li><li>Concevoir, gérer, administrer et exploiter les données de l'entreprise et mettre à disposition toutes les informations pour un bon pilotage de l'entreprise</li><li>Satisfaire les besoins des utilisateurs au regard de la chaîne de valeur du client, organiser et piloter un projet informatique avec des méthodes classiques ou agiles</li></ul>
+          </div>
+        </div>
+
+        <div class="card feature">
+          <div class="card-top">
+            <div class="card-ic"><i class="fas fa-server"></i></div>
+            <span class="badge badge-feature"><i class="fas fa-star"></i> Migration</span>
+          </div>
+          <h3>Migration de virtualisation Hyper-V → Proxmox VE</h3>
+          <p class="desc">
+            Migration de l'infrastructure de virtualisation d'une solution propriétaire vers l'hyperviseur open source
+            <strong>Proxmox VE</strong>, sur le même serveur physique : export/import des VM métier, reconfiguration
+            réseau et validation complète. Mise en place d'une supervision de disponibilité (healthcheck.io) et de
+            sauvegardes automatisées SMB.
+          </p>
+          <div class="tags">
+            <span class="tag">Proxmox VE</span><span class="tag">Hyper-V</span><span class="tag">Linux</span><span class="tag">Windows Server</span><span class="tag">Backup SMB</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.05 · Programmation système</span></div>
+            <ul class="ue-list"><li>Installer, configurer, mettre à disposition, maintenir en conditions opérationnelles des infrastructures, des services et des réseaux et optimiser le système informatique d'une organisation</li><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-ic"><i class="fab fa-windows"></i></div>
+          </div>
+          <h3>Finalisation de la migration Windows 11</h3>
+          <p class="desc">
+            Déploiement de Windows 11 sur un parc hétérogène (radiologie, secrétariats, cabinets dentaires).
+            Contournement documenté des prérequis TPM / Secure Boot sur les postes non éligibles, reconfiguration
+            complète de l'environnement (lecteurs réseau, certificats, VPN) et cartographie d'avancement sous EdrawMax.
+          </p>
+          <div class="tags">
+            <span class="tag">Windows 11</span><span class="tag">Déploiement</span><span class="tag">TPM / UEFI</span><span class="tag">Poste de travail</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.05 · Programmation système</span></div>
+            <ul class="ue-list"><li>Installer, configurer, mettre à disposition, maintenir en conditions opérationnelles des infrastructures, des services et des réseaux et optimiser le système informatique d'une organisation</li><li>Satisfaire les besoins des utilisateurs au regard de la chaîne de valeur du client, organiser et piloter un projet informatique avec des méthodes classiques ou agiles</li></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-ic"><i class="fas fa-network-wired"></i></div>
+          </div>
+          <h3>Administration réseau &amp; commutation UniFi</h3>
+          <p class="desc">
+            Consolidation de l'architecture réseau avec les commutateurs <strong>Ubiquiti UniFi</strong> :
+            configuration fine, mise en place de ports miroir pour la supervision de sécurité, prise en compte des
+            plages DHCP et de la continuité de service pour la téléphonie 3CX et l'imagerie médicale volumineuse.
+          </p>
+          <div class="tags">
+            <span class="tag">Ubiquiti UniFi</span><span class="tag">Port miroir</span><span class="tag">DHCP</span><span class="tag">VoIP 3CX</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R2.01 · Services réseau</span></div>
+            <ul class="ue-list"><li>Installer, configurer, mettre à disposition, maintenir en conditions opérationnelles des infrastructures, des services et des réseaux et optimiser le système informatique d'une organisation</li></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-ic"><i class="fas fa-microscope"></i></div>
+          </div>
+          <h3>Gestion système &amp; intégration d'appareils médicaux</h3>
+          <p class="desc">
+            Mise en service de postes neufs (montage matériel, bascule BIOS→UEFI, stress test Prime95/Cinebench) et
+            intégration d'équipements médicaux (audiomètre, spiromètre, échographe). Résolution des conflits
+            antivirus par des <strong>exclusions ciblées et tracées</strong> plutôt qu'une désactivation globale, et
+            gestion proactive de la saturation disque.
+          </p>
+          <div class="tags">
+            <span class="tag">Poste de travail</span><span class="tag">Windows Defender</span><span class="tag">Matériel</span><span class="tag">Diagnostic</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.05 · Programmation système</span></div>
+            <ul class="ue-list"><li>Installer, configurer, mettre à disposition, maintenir en conditions opérationnelles des infrastructures, des services et des réseaux et optimiser le système informatique d'une organisation</li><li>Concevoir, gérer, administrer et exploiter les données de l'entreprise et mettre à disposition toutes les informations pour un bon pilotage de l'entreprise</li></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-ic"><i class="fas fa-user-shield"></i></div>
+          </div>
+          <h3>Durcissement &amp; volet cybersécurité</h3>
+          <p class="desc">
+            Application du principe de <strong>défense en profondeur</strong> sur un SI de santé : durcissement Active
+            Directory, conformité des postes, sensibilisation au hameçonnage et traçabilité rigoureuse des exceptions
+            de sécurité imposées par un parc médical hétérogène — un arbitrage constant entre sécurité et continuité des soins.
+          </p>
+          <div class="tags">
+            <span class="tag">Défense en profondeur</span><span class="tag">Active Directory</span><span class="tag">RGPD</span><span class="tag">Durcissement</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.09 · Cryptographie et sécurité</span></div>
+            <ul class="ue-list"><li>Installer, configurer, mettre à disposition, maintenir en conditions opérationnelles des infrastructures, des services et des réseaux et optimiser le système informatique d'une organisation</li><li>Concevoir, gérer, administrer et exploiter les données de l'entreprise et mettre à disposition toutes les informations pour un bon pilotage de l'entreprise</li></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-ic"><i class="fas fa-headset"></i></div>
+          </div>
+          <h3>Support, automatisation &amp; continuité de service</h3>
+          <p class="desc">
+            Socle quotidien du poste : traitement des incidents sur les applications métier (Galaxie, eO, One Manager),
+            automatisation de la réinitialisation des lecteurs de cartes CPS/Vitale, administration Microsoft 365 (MFA,
+            synchronisation) et documentation systématique pour pérenniser les connaissances de l'équipe.
+          </p>
+          <div class="tags">
+            <span class="tag">Support N1/N2</span><span class="tag">Microsoft 365</span><span class="tag">Scripting</span><span class="tag">Documentation</span>
+          </div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.05 · Programmation système</span></div>
+            <ul class="ue-list"><li>Concevoir, gérer, administrer et exploiter les données de l'entreprise et mettre à disposition toutes les informations pour un bon pilotage de l'entreprise</li><li>Acquérir, développer et exploiter les aptitudes nécessaires pour travailler efficacement dans une équipe informatique</li></ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ACADEMIC PROJECTS -->
+  <section id="projets">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="eyebrow">04 — Projets académiques</p>
+        <h2 class="section-title">SAE &amp; projets IUT</h2>
+        <p class="section-sub">Une sélection de projets représentatifs du parcours DACS. Filtre par domaine.</p>
+      </div>
+
+      <div class="filters reveal" id="filters">
+        <button class="filter-btn active" data-f="all">Tout</button>
+        <button class="filter-btn" data-f="secu">Sécurité</button>
+        <button class="filter-btn" data-f="dev">Développement</button>
+        <button class="filter-btn" data-f="infra">Infrastructure</button>
+        <button class="filter-btn" data-f="data">Données</button>
+      </div>
+
+      <div class="cards" id="projGrid">
+
+        <div class="card" data-cat="secu">
+          <div class="card-top"><div class="card-ic"><i class="fas fa-memory"></i></div><span class="badge badge-feature"><i class="fas fa-star"></i> Sécu</span></div>
+          <h3>SAE Buffer Overflow</h3>
+          <p class="desc">Étude et démonstration d'attaques par dépassement de tampon en C et Python, avec exploitation de la pile et présentation orale des vulnérabilités.</p>
+          <div class="tags"><span class="tag">C</span><span class="tag">Python</span><span class="tag">Exploitation</span></div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.09 · Cryptographie et sécurité</span></div>
+            <ul class="ue-list"><li>Installer, configurer, mettre à disposition, maintenir en conditions opérationnelles des infrastructures, des services et des réseaux et optimiser le système informatique d'une organisation</li><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li></ul>
+          </div>
+        </div>
+
+        <div class="card" data-cat="dev">
+          <div class="card-top"><div class="card-ic"><i class="fab fa-raspberry-pi"></i></div></div>
+          <h3>BattleShip — Raspberry Pi SenseHAT</h3>
+          <p class="desc">Jeu de bataille navale en Python sur Raspberry Pi avec affichage sur matrice LED SenseHAT et contrôle au joystick. Présentation orale du projet en anglais.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Raspberry Pi</span><span class="tag">SenseHAT</span></div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.12 · Anglais</span></div>
+            <ul class="ue-list"><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li><li>Installer, configurer, mettre à disposition, maintenir en conditions opérationnelles des infrastructures, des services et des réseaux et optimiser le système informatique d'une organisation</li></ul>
+          </div>
+        </div>
+
+        <div class="card" data-cat="dev">
+          <div class="card-top"><div class="card-ic"><i class="fab fa-laravel"></i></div></div>
+          <h3>Réseau social — Laravel &amp; Breeze</h3>
+          <p class="desc">Développement en équipe d'un réseau social complet : authentification, profils, publications et interactions, avec Laravel, Breeze et MySQL.</p>
+          <div class="tags"><span class="tag">Laravel</span><span class="tag">PHP</span><span class="tag">MySQL</span></div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R3.01 · Développement web</span></div>
+            <ul class="ue-list"><li>Développer — c'est-à-dire concevoir, coder, tester et intégrer — une solution informatique pour un client</li><li>Acquérir, développer et exploiter les aptitudes nécessaires pour travailler efficacement dans une équipe informatique</li></ul>
+          </div>
+        </div>
+
+        <div class="card" data-cat="infra">
+          <div class="card-top"><div class="card-ic"><i class="fab fa-docker"></i></div><span class="badge badge-feature"><i class="fas fa-star"></i> DevOps</span></div>
+          <h3>SAE Virtualisation — cluster Docker</h3>
+          <p class="desc">Déploiement d'un cluster de conteneurs Docker multi-services, mettant en pratique la virtualisation, l'orchestration et la mise en réseau de services.</p>
+          <div class="tags"><span class="tag">Docker</span><span class="tag">Virtualisation</span><span class="tag">DevOps</span></div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R2.01 · Services réseau</span></div>
+            <ul class="ue-list"><li>Installer, configurer, mettre à disposition, maintenir en conditions opérationnelles des infrastructures, des services et des réseaux et optimiser le système informatique d'une organisation</li><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li></ul>
+          </div>
+        </div>
+
+        <div class="card" data-cat="dev">
+          <div class="card-top"><div class="card-ic"><i class="fas fa-diagram-project"></i></div><span class="badge badge-feature"><i class="fas fa-star"></i> 15/20</span></div>
+          <h3>SAE Coloration de graphes</h3>
+          <p class="desc">Optimisation de coloration de graphes visant à minimiser le nombre de couleurs, avec conception d'algorithmes et analyse de complexité.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Algorithmes</span><span class="tag">Optimisation</span></div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R1.03 · Architecture logicielle</span></div>
+            <ul class="ue-list"><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li></ul>
+          </div>
+        </div>
+
+        <div class="card" data-cat="dev">
+          <div class="card-top"><div class="card-ic"><i class="fab fa-java"></i></div></div>
+          <h3>SAE Gestion des collisions d'avions</h3>
+          <p class="desc">Application Java avec interface Swing pour la gestion des collisions d'avions par coloration de graphe, incluant modélisation et visualisation.</p>
+          <div class="tags"><span class="tag">Java</span><span class="tag">Swing</span><span class="tag">Graphes</span></div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R1.01 · Initiation au développement</span></div>
+            <ul class="ue-list"><li>Développer — c'est-à-dire concevoir, coder, tester et intégrer — une solution informatique pour un client</li><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li></ul>
+          </div>
+        </div>
+
+        <div class="card" data-cat="data">
+          <div class="card-top"><div class="card-ic"><i class="fas fa-chart-pie"></i></div></div>
+          <h3>SAE PowerBI &amp; PL/SQL</h3>
+          <p class="desc">Analyse de données et création de tableaux de bord sous PowerBI, avec requêtes PL/SQL pour l'exploitation d'une base de données décisionnelle.</p>
+          <div class="tags"><span class="tag">PowerBI</span><span class="tag">PL/SQL</span><span class="tag">Dataviz</span></div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R2.02 · Bases de données</span></div>
+            <ul class="ue-list"><li>Concevoir, gérer, administrer et exploiter les données de l'entreprise et mettre à disposition toutes les informations pour un bon pilotage de l'entreprise</li><li>Satisfaire les besoins des utilisateurs au regard de la chaîne de valeur du client, organiser et piloter un projet informatique avec des méthodes classiques ou agiles</li></ul>
+          </div>
+        </div>
+
+        <div class="card" data-cat="infra">
+          <div class="card-top"><div class="card-ic"><i class="fas fa-tower-broadcast"></i></div></div>
+          <h3>SAE Gestion d'aéroport en C</h3>
+          <p class="desc">Application en C pour la gestion d'un aéroport, implémentant des structures de données avancées et des algorithmes d'optimisation.</p>
+          <div class="tags"><span class="tag">C</span><span class="tag">Structures de données</span><span class="tag">Algorithmes</span></div>
+          <div class="card-foot">
+            <div class="res-tags"><span class="res-tag">R1.02 · Développement d'interfaces</span></div>
+            <ul class="ue-list"><li>Développer — c'est-à-dire concevoir, coder, tester et intégrer — une solution informatique pour un client</li><li>Proposer des applications informatiques optimisées en fonction de critères spécifiques : temps d'exécution, précision, consommation de ressources</li></ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER / CONTACT -->
+  <footer id="contact">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">Tristan <span class="grad">Clerc</span></div>
+        <p class="foot-desc">
+          Cybersécurité, administration des systèmes et recherche de vulnérabilités.
+          Discutons de vos enjeux de sécurité ou d'un projet d'infrastructure.
+        </p>
+        <div class="socials">
+          <a href="mailto:tristan.clerc@etu.univ-lyon1.fr" aria-label="Email"><i class="fas fa-envelope"></i></a>
+          <a href="https://www.linkedin.com/in/tristan-clerc/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://github.com/contentsombre" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <a class="foot-link" href="#about">Profil</a>
+        <a class="foot-link" href="#research">Recherche &amp; 0-day</a>
+        <a class="foot-link" href="#alternance">Alternance</a>
+        <a class="foot-link" href="#projets">Projets académiques</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a class="foot-link" href="mailto:tristan.clerc@etu.univ-lyon1.fr"><i class="fas fa-envelope" style="width:18px"></i> Email</a>
+        <a class="foot-link" href="https://www.linkedin.com/in/tristan-clerc/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin" style="width:18px"></i> LinkedIn</a>
+        <a class="foot-link" href="https://github.com/contentsombre" target="_blank" rel="noopener noreferrer"><i class="fab fa-github" style="width:18px"></i> GitHub</a>
+      </div>
+    </div>
+    <div class="copyright">
+      <span>© 2026 Tristan Clerc — Tous droits réservés</span>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll progress
+    const progress = document.getElementById('progress');
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      progress.style.width = (window.scrollY / h) * 100 + '%';
+    });
+
+    // Mobile nav
+    const toggle = document.getElementById('navToggle');
+    const links = document.getElementById('navLinks');
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+
+    // Reveal + card stagger on scroll
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    document.querySelectorAll('.cards').forEach(grid => {
+      const cards = [...grid.children];
+      const cio = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const i = cards.indexOf(e.target);
+            e.target.style.transitionDelay = (i % 3) * 0.08 + 's';
+            e.target.classList.add('in');
+            cio.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      cards.forEach(c => cio.observe(c));
+    });
+
+    // Skill bars animate
+    const sio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.bar span').forEach(s => s.style.width = s.dataset.w);
+          sio.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.skills-grid').forEach(el => sio.observe(el));
+
+    // Project filters
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const projCards = document.querySelectorAll('#projGrid .card');
+    filterBtns.forEach(btn => btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.f;
+      projCards.forEach(c => {
+        const show = f === 'all' || c.dataset.cat === f;
+        c.style.display = show ? '' : 'none';
+      });
+    }));
+  </script>
+</body>
+</html>
